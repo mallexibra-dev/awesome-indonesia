@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+import json
+import os
+import urllib.request
+from datetime import date
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+REPOS_FILE = ROOT / "repos.json"
+README_FILE = ROOT / "README.md"
+
+
+def request_json(url):
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "awesome-indonesia-readme-generator",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+
+    request = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(request, timeout=30) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def clean(value, fallback="N/A"):
+    if value is None or value == "":
+        return fallback
+    return str(value)
+
+
+def repo_metadata(full_name):
+    data = request_json(f"https://api.github.com/repos/{full_name}")
+    license_data = data.get("license") or {}
+    return {
+        "full_name": data["full_name"],
+        "owner": data["owner"]["login"],
+        "url": data["html_url"],
+        "description": clean(data.get("description")),
+        "language": clean(data.get("language")),
+        "stars": data.get("stargazers_count", 0),
+        "forks": data.get("forks_count", 0),
+        "open_issues": data.get("open_issues_count", 0),
+        "watchers": data.get("watchers_count", 0),
+        "updated_at": clean(data.get("pushed_at", "")[:10]),
+        "license": clean(license_data.get("spdx_id")),
+        "topics": data.get("topics") or [],
+    }
+
+
+def tags_for(topics):
+    if not topics:
+        return "N/A"
+    tags = " ".join(f"`{topic}`" for topic in topics[:6])
+    if len(topics) > 6:
+        tags += f" `+{len(topics) - 6}`"
+    return tags
+
+
+def build_readme(items):
+    rows = [
+        "# Awesome Indonesia",
+        "",
+        "[![Awesome](https://awesome.re/badge.svg)](https://github.com/sindresorhus/awesome)",
+        "[![GitHub stars](https://img.shields.io/github/stars/indopensource/awesome-indonesia?style=social)](https://github.com/indopensource/awesome-indonesia)",
+        "",
+        '<meta name="description" content="Awesome Indonesia adalah katalog proyek open source Indonesia yang disusun berdasarkan jumlah stars GitHub untuk menilai popularitas komunitas.">',
+        '<meta name="keywords" content="awesome indonesia, awesome-list indonesia, proyek open source indonesia, repository indonesia, komunitas open source indonesia">',
+        "",
+        "Kumpulan proyek open source Indonesia yang aktif dan bisa langsung dijadikan referensi belajar, integrasi, atau kontribusi.",
+        "",
+        "## Daftar Isi",
+        "- [Tentang Daftar](#tentang-daftar)",
+        "- [Urutan & Sumber Data](#urutan--sumber-data)",
+        "- [Daftar Proyek](#daftar-proyek)",
+        "- [Cara Berkontribusi](#cara-berkontribusi)",
+        "- [Lisensi](#lisensi)",
+        "",
+        "## Tentang Daftar",
+        "Awesome List ini berisi koleksi proyek open source Indonesia yang dapat diakses publik dan tetap dirawat oleh komunitas.",
+        "",
+        "## Urutan & Sumber Data",
+        "Urutan proyek berdasarkan jumlah **GitHub stars** (descending).",
+        f"Data terakhir disinkronkan: **{date.today().isoformat()}**.",
+        "",
+        "## Daftar Proyek",
+        "",
+        "| No | Project | Deskripsi | Pembuat | Bahasa | Stars | Forks | Issue | Lisensi | Terakhir Update | Tags |",
+        "| - | - | - | - | - | - | - | - | - | - | - |",
+    ]
+
+    for index, item in enumerate(items, 1):
+        repo_link = f"[{item['full_name']}]({item['url']})"
+        owner = f"[@{item['owner']}](https://github.com/{item['owner']})"
+        description = item["description"].replace("|", "\\|")
+        rows.append(
+            f"| {index} | {repo_link} | {description} | {owner} | {item['language']} | "
+            f"{item['stars']} | {item['forks']} | {item['open_issues']} | {item['license']} | "
+            f"{item['updated_at']} | {tags_for(item['topics'])} |"
+        )
+
+    rows.extend(
+        [
+            "",
+            "## Cara Berkontribusi",
+            "Lihat [CONTRIBUTING.md](CONTRIBUTING.md).",
+            "",
+            "## Lisensi",
+            "Dokumen dan struktur daftar ini menggunakan MIT License, sedangkan tiap proyek tetap mengikuti lisensi asli masing-masing repositori.",
+            "",
+        ]
+    )
+    return "\n".join(rows)
+
+
+def main():
+    repos = json.loads(REPOS_FILE.read_text(encoding="utf-8"))
+    items = [repo_metadata(repo) for repo in repos]
+    items.sort(key=lambda item: (item["stars"], item["watchers"], item["forks"]), reverse=True)
+    README_FILE.write_text(build_readme(items) + "\n", encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()
