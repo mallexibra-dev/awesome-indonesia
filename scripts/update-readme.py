@@ -59,6 +59,12 @@ def tags_for(topics):
     return tags
 
 
+def project_cell(item):
+    repo_link = f"[{item['full_name']}]({item['url']})"
+    description = item["description"].replace("|", "\\|")
+    return f"{repo_link}<br>{description}"
+
+
 def build_readme(items):
     rows = [
         "# Awesome Indonesia",
@@ -87,16 +93,14 @@ def build_readme(items):
         "",
         "## Daftar Proyek",
         "",
-        "| No | Project | Deskripsi | Pembuat | Bahasa | Stars | Forks | Issue | Lisensi | Terakhir Update | Tags |",
-        "| - | - | - | - | - | - | - | - | - | - | - |",
+        "| No | Project | Pembuat | Bahasa | Stars | Forks | Issue | Lisensi | Terakhir Update | Tags |",
+        "| - | - | - | - | - | - | - | - | - | - |",
     ]
 
     for index, item in enumerate(items, 1):
-        repo_link = f"[{item['full_name']}]({item['url']})"
         owner = f"[@{item['owner']}](https://github.com/{item['owner']})"
-        description = item["description"].replace("|", "\\|")
         rows.append(
-            f"| {index} | {repo_link} | {description} | {owner} | {item['language']} | "
+            f"| {index} | {project_cell(item)} | {owner} | {item['language']} | "
             f"{item['stars']} | {item['forks']} | {item['open_issues']} | {item['license']} | "
             f"{item['updated_at']} | {tags_for(item['topics'])} |"
         )
