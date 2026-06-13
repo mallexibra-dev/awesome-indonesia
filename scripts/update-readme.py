@@ -36,6 +36,7 @@ def repo_metadata(full_name):
     license_data = data.get("license") or {}
     return {
         "full_name": data["full_name"],
+        "name": data["name"],
         "owner": data["owner"]["login"],
         "url": data["html_url"],
         "description": clean(data.get("description")),
@@ -60,7 +61,7 @@ def tags_for(topics):
 
 
 def project_cell(item):
-    repo_link = f"[{item['full_name']}]({item['url']})"
+    repo_link = f"[{item['name']}]({item['url']})"
     description = item["description"].replace("|", "\\|")
     anchor = f'<a id="{project_anchor(item["full_name"])}"></a>'
     return f"{anchor}{repo_link}<br>{description}"
