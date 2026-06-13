@@ -2,24 +2,33 @@
 
 Repo ini mengikuti gaya Awesome List.
 
+## Cara menambah proyek
+
+1. Tambahkan nama repo ke `repos.json` dengan format `owner/repo`.
+2. Jalankan `python scripts/update-readme.py`.
+3. Jalankan `npx --yes markdownlint-cli --config .markdownlint.json README.md CONTRIBUTING.md SECURITY.md CODE_OF_CONDUCT.md`.
+4. Buat pull request dengan ringkasan proyek yang ditambahkan.
+
 ## Standar kontribusi
 
 - Tambahkan proyek open source yang relevan dengan ekosistem Indonesia.
-- Sertakan deskripsi resmi yang jelas dan singkat.
-- Cantumkan pembuat (owner), bahasa utama, dan tags/topik.
-- Urutkan ulang berdasarkan jumlah stars (dari terbesar).
-- Untuk menambah atau menghapus proyek, edit `repos.json`, lalu jalankan `python scripts/update-readme.py`.
+- Pastikan repo publik dan bisa diakses dari GitHub.
+- Pastikan repo bukan duplikasi dari entri yang sudah ada.
+- Jangan edit tabel README secara manual jika metadata bisa dihasilkan dari GitHub API.
+- Deskripsi, pembuat, bahasa, lisensi, stars, forks, issue, tanggal update, dan tags diambil otomatis dari GitHub API.
 
-## Format baris
+## Format repos.json
 
-```md
-| No | Project | Deskripsi | Pembuat | Bahasa | Tags | ⭐ |
-| - | - | - | - | - | - | - |
-| 1 | [owner/repo](https://github.com/owner/repo) | Deskripsi singkat | [@owner](https://github.com/owner) | TypeScript | `tag1` `tag2` | 123 |
+```json
+[
+  "owner/repo",
+  "another-owner/another-repo"
+]
 ```
 
 ## Rekomendasi update
 
-- Gunakan nama owner dan URL yang valid.
-- Jika topik terlalu panjang, cukup tampilkan beberapa tag kunci.
-- Jangan edit tabel README secara manual jika metadata bisa dihasilkan dari GitHub API.
+- Gunakan nama owner dan repo yang valid.
+- Jika metadata di README terlihat kurang lengkap, update metadata di repo asalnya terlebih dahulu.
+- README diurutkan otomatis berdasarkan jumlah stars terbanyak.
+- Workflow `Update README` berjalan harian dan bisa dipicu manual dari tab Actions.
