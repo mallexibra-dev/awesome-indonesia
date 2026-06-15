@@ -15,7 +15,7 @@ Gunakan repo ini untuk proyek open source Indonesia yang masih fresh dan aktif p
 1. Tambahkan nama repo ke `repos.json` dengan format `owner/repo`.
 2. Jalankan `make validate` untuk memastikan format list benar.
 3. Buat pull request dengan ringkasan proyek yang ditambahkan.
-4. README akan diperbarui otomatis setelah PR digabungkan ke `main`.
+4. README akan diperbarui lewat PR metadata otomatis setelah PR digabungkan ke `main`.
 
 ## Standar kontribusi
 
@@ -35,6 +35,22 @@ make check
 ```
 
 Gunakan `make update` hanya jika ingin melihat hasil README lokal sebelum membuat PR.
+
+## Workflow otomatis
+
+Contributor cukup mengubah `repos.json`. Setelah PR contributor digabungkan,
+workflow `Update README` akan membuat PR metadata terpisah berisi hasil generate
+README terbaru.
+
+Workflow ini memakai repository secret `README_UPDATE_TOKEN` agar bisa membuat PR
+tanpa membuka permission write untuk seluruh organization. Token tersebut harus
+berupa fine-grained GitHub token dengan akses hanya ke repo ini dan permission:
+
+- `Contents`: read and write
+- `Pull requests`: read and write
+
+`main` tetap wajib lewat pull request dan branch protection. Workflow tidak
+melakukan approve, merge, atau push langsung ke `main`.
 
 ## Format repos.json
 

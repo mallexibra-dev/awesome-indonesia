@@ -153,6 +153,7 @@ def build_readme(items):
         "Awesome List ini berisi koleksi proyek open source Indonesia yang dapat diakses publik dan tetap dirawat oleh komunitas.",
         "",
         "Repo ini difokuskan untuk proyek yang masih fresh dan aktif pada 2026.",
+        "Contributor cukup submit perubahan ke `repos.json`; README akan diperbarui lewat PR metadata otomatis setelah perubahan digabungkan.",
         "Untuk resource non-app, proyek legacy, atau kandidat revival, gunakan repo turunan yang lebih sesuai:",
         "",
         "- [Awesome Indonesia Legacy](https://github.com/IndopenSource/awesome-indonesia-legacy)",
