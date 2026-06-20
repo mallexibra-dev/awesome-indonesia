@@ -38,6 +38,7 @@
   "maziyank/nats",
   "muhfauziazhar/nusakit-api",
   "mydisha/keirouter",
+  "mallexibra-dev/clipforge",
   "pendig/rute-bayar",
   "rahmanef63/control-room",
   "rahmanef63/open-silong",
@@ -59,6 +60,5 @@
   "wauputr4/bansos",
   "wauputr4/hermex",
   "wauputr4/skill-bansos",
-  "xpajonx/openempiric",
-  "mallexibra-dev/clipforge"
+  "xpajonx/openempiric"
 ]
